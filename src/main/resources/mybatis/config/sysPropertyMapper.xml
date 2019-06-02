@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="sysProperty">
+
+    <sql id="where">
+        <where>
+            <if test="seqIds !=null and seqIds.size() != 0">
+                and seq_id in
+                <foreach item="item" collection="seqIds" separator="," open="(" close=")" index="">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="sysGroups !=null and sysGroups.size() != 0">
+                and sys_group in
+                <foreach item="item" collection="sysGroups" separator="," open="(" close=")" index="">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="sysKeys !=null and sysKeys.size() != 0">
+                and sys_key in
+                <foreach item="item" collection="sysKeys" separator="," open="(" close=")" index="">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="createTimeBegin != null">
+                and create_time >= #{createTimeBegin}
+            </if>
+
+            <include refid="util.where"/>
+        </where>
+    </sql>
+
+    <sql id="fields">
+        seq_id as seqId ,sys_group as sysGroup ,sys_key as sysKey ,sys_value as sysValue
+		,remark ,enable
+		,create_time as createTime ,create_by as createBy
+		,last_update_time as lastUpdateTime ,last_update_by as lastUpdateBy
+    </sql>
+
+    <select id="query" parameterType="com.ling.mybatis.begin.bean.config.SysPropertyQuery" resultType="com.ling.mybatis.begin.bean.config.SysProperty">
+        select <include refid="fields"/>
+        from t_sys_property
+        <include refid="where"/>
+        <include refid="util.orderBy"/>
+        <include refid="util.limit"/>
+    </select>
+
+    <select id="count" parameterType="com.ling.mybatis.begin.bean.config.SysPropertyQuery" resultType="long">
+        select count(*)
+        from t_sys_property
+        <include refid="where"/>
+    </select>
+
+    <insert id="insert" parameterType="com.ling.mybatis.begin.bean.config.SysProperty" useGeneratedKeys="true" keyProperty="seqId" >
+        insert into t_sys_property(
+           sys_group ,sys_key ,sys_value ,remark ,enable
+            <if test="createBy !=null ">
+               ,create_by
+            </if>
+            ,create_time
+            <if test="lastUpdateBy !=null ">
+               ,last_update_by
+            </if>
+            ,last_update_time
+        ) values (
+          #{sysGroup} ,#{sysKey} ,#{sysValue} ,#{remark} ,#{enable}
+          <if test="createBy !=null ">
+              ,#{createBy}
+          </if>
+          ,#{createTime}
+          <if test="lastUpdateBy !=null ">
+              ,#{lastUpdateBy}
+          </if>
+          ,#{lastUpdateTime}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.ling.mybatis.begin.bean.config.SysPropertyUpdateRequest">
+        update t_sys_property
+        set
+          sys_group = #{sysGroup}
+          ,sys_key = #{sysKey}
+          ,sys_value = #{sysValue}
+          <if test="remark !=null ">
+              ,remark = #{remark}
+          </if>
+          <if test="enable !=null ">
+              ,enable = #{enable}
+          </if>
+          <if test="lastUpdateBy !=null ">
+              ,last_update_by = #{lastUpdateBy}
+          </if>
+          ,last_update_time = #{lastUpdateTime}
+        where seq_id = #{seqId}
+    </update>
+
+    <delete id="delete" parameterType="com.ling.mybatis.begin.bean.config.SysPropertyQuery">
+        delete from t_sys_property
+        <include refid="where"/>
+    </delete>
+</mapper>

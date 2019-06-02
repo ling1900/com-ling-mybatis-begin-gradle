@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="util">
+    <sql id="where">
+        <if test="createTimeEnd != null">
+            <![CDATA[
+                and create_time <= #{createTimeEnd}
+            ]]>
+        </if>
+
+        <if test="lastUpdateTimeBegin != null">
+            and last_update_time >= #{lastUpdateTimeBegin}
+        </if>
+
+        <if test="lastUpdateTimeEnd != null">
+            <![CDATA[
+                and last_update_time <= #{lastUpdateTimeEnd}
+            ]]>
+        </if>
+
+        <if test="createBys !=null and createBys.size() != 0">
+            and create_by in
+            <foreach item="item" collection="createBys" separator="," open="(" close=")" index="">
+                #{item}
+            </foreach>
+        </if>
+
+        <if test="lastUpdateBys !=null and lastUpdateBys.size() != 0">
+            and last_update_by in
+            <foreach item="item" collection="lastUpdateBys" separator="," open="(" close=")" index="">
+                #{item}
+            </foreach>
+        </if>
+    </sql>
+
+    <!-- ========================================== -->
+    <sql id="orderBy">
+        <if test="orderBy != null and orderBy.trim() != ''">
+            order by ${orderBy}
+        </if>
+    </sql>
+
+    <sql id="limit">
+        limit #{rowNo}, #{pageSize}
+    </sql>
+</mapper>

@@ -1,0 +1,5 @@
+rootProject.name = 'mybatis-begin-gradle'
+
+// https://guides.gradle.org/building-spring-boot-2-projects-with-gradle/
+enableFeaturePreview('IMPROVED_POM_SUPPORT')
+
